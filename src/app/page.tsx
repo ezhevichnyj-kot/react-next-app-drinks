@@ -5,7 +5,7 @@ import { Container, ListView, DrinkCard, SearchPanel } from "@/shared";
 import { cocktail } from "@prisma/client";
 import axios from "axios";
 
-const Home = () => {
+const HomePage = () => {
     
     // TODO вынести в отдельный контекст (потом мемоизировать функции)
     const [cocktailsState, setCocktailsState] = useState<cocktail[]>([]);
@@ -40,9 +40,13 @@ const Home = () => {
                 formData.append("title", title);
                 formData.append("ingredients_id", JSON.stringify(ingredients_id));
 
-                const response = JSON.parse(await axios.post('/api/cocktails/get', formData));
+                const response = JSON.parse((await axios.post('/api/cocktails/get', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    }
+                })).data.response);
 
-                setCocktailsState(cocktailsState);
+                setCocktailsState(response);
             }
             catch(error) {
                 // TODO popup error
@@ -72,4 +76,4 @@ const Home = () => {
     );
 }
 
-export default Home;
+export default HomePage;

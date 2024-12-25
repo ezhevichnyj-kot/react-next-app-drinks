@@ -1,7 +1,7 @@
 "use client";
 
 import { Container } from "../Container";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ingredient } from "@prisma/client";
 import { ISearchPanelProps } from "./component.props";
 import { twMerge } from "tailwind-merge";
@@ -14,7 +14,7 @@ export const SearchPanel = ({ className, searchCallback }: ISearchPanelProps) =>
     
     const [ingredientsState, setIngredientsState] = useState<(ingredient & {inFilter: boolean})[]>([]);
     const [titleState, setTitleState] = useState<string>("");
-    const [ingredientTitileState, setIngredientTitleState] = useState<string>("");
+    const [ingredientTitleState, setIngredientTitleState] = useState<string>("");
 
     // get ingredients on load
     useEffect(() => {
@@ -40,7 +40,7 @@ export const SearchPanel = ({ className, searchCallback }: ISearchPanelProps) =>
 
     const addIngredient = () => {
 
-        const found_item = ingredientsState.find(item => item.title == ingredientTitileState);
+        const found_item = ingredientsState.find(item => item.title == ingredientTitleState);
 
         if (found_item) {
             setIngredientsState(
