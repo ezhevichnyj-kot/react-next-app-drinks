@@ -7,6 +7,7 @@ import { ISearchPanelProps } from "./component.props";
 import { twMerge } from "tailwind-merge";
 import { IconPlusSvg } from "@/assets";
 import axios from "axios";
+import SuperJSON from "superjson";
 
 // TODO переделать на React hook form
 
@@ -21,7 +22,7 @@ export const SearchPanel = ({ className, searchCallback }: ISearchPanelProps) =>
         const fetchData = async () => {
             
             try {
-                const response = JSON.parse((await axios.post('/api/ingredients/get', {}, {
+                const response = SuperJSON.parse<ingredient[]>((await axios.post('/api/ingredients/get', {}, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }

@@ -8,6 +8,7 @@ import Markdown from "react-markdown";
 import { useDropzone } from "react-dropzone";
 import { IconPlusSvg } from "@/assets";
 import { useRouter } from "next/navigation";
+import SuperJSON from "superjson";
 
 const CreatePage = ({params}: {params: Promise<{id: string}>}) => {
 
@@ -68,7 +69,7 @@ const CreatePage = ({params}: {params: Promise<{id: string}>}) => {
             const formData = new FormData();
 
             formData.append("title", (titleState !== "" ? titleState : cocktailState?.title) || "Без названия");
-            formData.append("ingredients_id", JSON.stringify(ingredientsState.filter((item) => item.inFilter).map((item) => item.id)));
+            formData.append("ingredients_id", SuperJSON.stringify(ingredientsState.filter((item) => item.inFilter).map((item) => item.id)));
             formData.append("markdown", (markdownState !== "" ? markdownState : cocktailState?.markdown) || "");
             if (imageFile) {
               formData.append("image", imageFile);

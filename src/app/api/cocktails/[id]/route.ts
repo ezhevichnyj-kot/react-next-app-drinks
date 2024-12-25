@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server"
 import { PrismaClient } from "@prisma/client";
-import { json } from "@/shared";
+import SuperJSON from "superjson";
 
 export const POST = async (request: NextRequest) => {
     // Получение данных
@@ -18,7 +18,7 @@ export const POST = async (request: NextRequest) => {
     await prisma.$disconnect();
 
     // Преобразование и вывод
-    const response = json(cocktail);
+    const response = SuperJSON.stringify(cocktail);
 
     return NextResponse.json({response, status: 200 });  
 };

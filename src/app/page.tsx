@@ -4,17 +4,18 @@ import { useEffect, useState } from "react";
 import { Container, ListView, DrinkCard, SearchPanel } from "@/shared";
 import { cocktail } from "@prisma/client";
 import axios from "axios";
+import SuperJSON from "superjson";
 
 const HomePage = () => {
     
     // TODO вынести в отдельный контекст (потом мемоизировать функции)
-    const [cocktailsState, setCocktailsState] = useState<cocktail[]>([]);
+    const [cocktailsState, setCocktailsState] = useState<cocktail[] | null>(null);
     
     // get cocktails on load
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = JSON.parse((await axios.post('/api/cocktails/get', {}, {
+                const response = SuperJSON.parse<cocktail[]>((await axios.post('/api/cocktails/get', {}, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
@@ -38,9 +39,9 @@ const HomePage = () => {
                 const formData = new FormData();
 
                 formData.append("title", title);
-                formData.append("ingredients_id", JSON.stringify(ingredients_id));
+                formData.append("ingredients_id", SuperJSON.stringify(ingredients_id));
 
-                const response = JSON.parse((await axios.post('/api/cocktails/get', formData, {
+                const response = SuperJSON.parse<cocktail[]>((await axios.post('/api/cocktails/get', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
@@ -63,7 +64,7 @@ const HomePage = () => {
 
             <Container className="flex col-start-2 p-10 ">
                 <ListView>
-                    { cocktailsState.map((item) => (
+                    {cocktailsState?.map((item) => (
                         <DrinkCard 
                             key={item.id}
                             cocktail={item}

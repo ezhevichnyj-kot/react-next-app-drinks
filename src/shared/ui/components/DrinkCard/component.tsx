@@ -7,6 +7,7 @@ import './style.css';
 import { ingredient } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import SuperJSON from "superjson";
 
 // TODO: пофиксить маркированный список
 // TODO: анимация нажатия звёздочки
@@ -25,8 +26,9 @@ export const DrinkCard = ({cocktail, onFeaturedChange}: IDrinkCardProps) => {
         const fetchData = async () => {
             try {
                 const formData = new FormData();
-                formData.append("id_cocktail", JSON.stringify(cocktail.id))
-                const response = JSON.parse((await axios.post('/api/ingredients/get', formData, {
+                formData.append("id_cocktail", SuperJSON.stringify(cocktail.id));
+
+                const response = SuperJSON.parse<ingredient[]>((await axios.post('/api/ingredients/get', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
@@ -49,7 +51,7 @@ export const DrinkCard = ({cocktail, onFeaturedChange}: IDrinkCardProps) => {
     }, [isFeaturedState]);
 
     return (
-        <div className="flex flex-col justify-center gap-y-2 w-40 h-card cursor-pointer" onClick={() => {router.push(`/view/${cocktail.id}`)}}>
+        <div className="flex flex-col justify-items-center gap-y-2 w-40 h-card cursor-pointer" onClick={() => {router.push(`/view/${cocktail.id}`)}}>
             <div className="flex relative">
                 <img src={cocktail.image ? cocktail.image : "/cocktails/default.png"} className="w-full h-52 object-cover rounded-xl" />
                 <button onClick={(e) => {e.stopPropagation(); handleChangeFeatured();}} className="absolute top-0 right-0 m-2">

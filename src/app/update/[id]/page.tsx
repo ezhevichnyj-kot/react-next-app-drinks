@@ -8,6 +8,7 @@ import Markdown from "react-markdown";
 import { useDropzone } from "react-dropzone";
 import { IconPlusSvg } from "@/assets";
 import { useRouter } from "next/navigation";
+import SuperJSON from "superjson";
 
 const ViewPage = ({params}: {params: Promise<{id: string}>}) => {
 
@@ -29,7 +30,7 @@ const ViewPage = ({params}: {params: Promise<{id: string}>}) => {
     useEffect(() => {
         const fetchCocktail = async () => {
             try {
-                const response = JSON.parse((await axios.post(`/api/cocktails/${(await params).id}`, {}, {
+                const response = SuperJSON.parse<cocktail>((await axios.post(`/api/cocktails/${(await params).id}`, {}, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
@@ -50,7 +51,7 @@ const ViewPage = ({params}: {params: Promise<{id: string}>}) => {
     
                     formData.append("id_cocktail", (await params).id);
     
-                    const response = JSON.parse((await axios.post('/api/ingredients/get', formData, {
+                    const response = SuperJSON.parse<ingredient[]>((await axios.post('/api/ingredients/get', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         }
@@ -68,7 +69,7 @@ const ViewPage = ({params}: {params: Promise<{id: string}>}) => {
             const fetchAllIngredients = async () => {
                 try {
     
-                    const response = JSON.parse((await axios.post('/api/ingredients/get', {}, {
+                    const response = SuperJSON.parse<ingredient[]>((await axios.post('/api/ingredients/get', {}, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         }
@@ -79,6 +80,7 @@ const ViewPage = ({params}: {params: Promise<{id: string}>}) => {
                 catch(error) {
                     // TODO popup error
                     console.error(error);
+                    return [];
                 }
             };
 
@@ -133,9 +135,9 @@ const ViewPage = ({params}: {params: Promise<{id: string}>}) => {
         try {
             const formData = new FormData();
 
-            formData.append("id", JSON.stringify(Number(cocktailState!.id)));
+            formData.append("id", SuperJSON.stringify(cocktailState?.id));
             formData.append("title", (titleState !== "" ? titleState : cocktailState?.title) || "Без названия");
-            formData.append("ingredients_id", JSON.stringify(ingredientsState.filter((item) => item.inFilter).map((item) => item.id)));
+            formData.append("ingredients_id", SuperJSON.stringify(ingredientsState.filter((item) => item.inFilter).map((item) => item.id)));
             formData.append("markdown", (markdownState !== "" ? markdownState : cocktailState?.markdown) || "");
             if (imageFile) {
               formData.append("image", imageFile);

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Markdown from "react-markdown";
 import { useRouter } from "next/navigation";
+import SuperJSON from "superjson";
 
 const ViewPage = ({params}: {params: Promise<{id: string}>}) => {
     
@@ -17,7 +18,7 @@ const ViewPage = ({params}: {params: Promise<{id: string}>}) => {
 
         const fetchCocktail = async () => {
             try {
-                const response = JSON.parse((await axios.post(`/api/cocktails/${(await params).id}`, {}, {
+                const response = SuperJSON.parse<cocktail>((await axios.post(`/api/cocktails/${(await params).id}`, {}, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
@@ -35,9 +36,9 @@ const ViewPage = ({params}: {params: Promise<{id: string}>}) => {
             try {
                 const formData = new FormData();
 
-                formData.append("id_cocktail", (await params).id);
+                formData.append("id_cocktail", SuperJSON.stringify((await params).id));
 
-                const response = JSON.parse((await axios.post('/api/ingredients/get', formData, {
+                const response = SuperJSON.parse<ingredient[]>((await axios.post('/api/ingredients/get', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
