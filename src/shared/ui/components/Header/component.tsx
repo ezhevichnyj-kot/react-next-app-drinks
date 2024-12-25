@@ -14,13 +14,15 @@ export interface IHeaderButton {
     onClick: () => void,
 }
 
-// TODO блин, забыл исправить на передачу кнопок сверху, щас уже не имеет особого смысла, поэтому пока оставлю так - исправить
-const buttons: IHeaderButton[] = [{title: "Коллекция", onClick: () => {}}]; // {title: "Миксер", onClick: () => {}}
+
 
 export const Header = ({className}: IHeaderProps) => {
 
     const router = useRouter();
     const [selectedItem, setSelectedItem] = useState<number>(1);
+
+    // TODO блин, забыл исправить на передачу кнопок сверху, щас уже не имеет особого смысла, поэтому пока оставлю так - исправить
+    const buttons: IHeaderButton[] = [{title: "Коллекция", onClick: () => {router.push("/add")}}]; // {title: "Миксер", onClick: () => {}}
 
     return (
         <Container className={twMerge('w-full min-w-max h-max', className)}>
