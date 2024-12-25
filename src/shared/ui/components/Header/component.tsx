@@ -19,7 +19,7 @@ export const Header = ({className}: IHeaderProps) => {
     const router = useRouter();
     const [selectedItem, setSelectedItem] = useState<number>(1);
     // TODO блин, забыл исправить на передачу кнопок сверху, щас уже не имеет особого смысла, поэтому пока оставлю так - исправить
-    const buttons: IHeaderButton[] = [{title: "Коллекция", onClick: () => {router.push("/add")}}]; // {title: "Миксер", onClick: () => {}}
+    const buttons: IHeaderButton[] = [{title: "Коллекция", onClick: () => {router.push('/');}}, {title: "Миксер", onClick: () => {router.push("/add")}}]; // {title: "Миксер", onClick: () => {}}
 
     return (
         <Container className={twMerge('w-full min-w-max h-max', className)}>
@@ -28,7 +28,7 @@ export const Header = ({className}: IHeaderProps) => {
                     <button 
                         className={twMerge('p-2 row-start-1', 'col-start-'.concat((index+1).toString()))}
                         key={index+1}
-                        onClick={() => {setSelectedItem(index+1); item.onClick(); router.push('/');}}
+                        onClick={() => {setSelectedItem(index+1); item.onClick();}}
                     >
                         {item.title}
                     </button>
