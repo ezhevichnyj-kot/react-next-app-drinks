@@ -5,7 +5,7 @@ import { IDrinkCardProps } from "./component.props";
 import { StarSvg } from "@/assets";
 import './style.css';
 import { ingredient } from "@prisma/client";
-import { fetchIngredients } from "@/shared/api/fetchIngredients";
+import axios from "axios";
 
 // TODO: пофиксить маркированный список
 // TODO: анимация нажатия звёздочки
@@ -20,16 +20,20 @@ export const DrinkCard = ({cocktail, onFeaturedChange}: IDrinkCardProps) => {
     
     useEffect(() => {
         const fetchData = async () => {
-            const data = await fetchIngredients({ id_cocktail: Number(cocktail.id) });
+            try {
+                const formData = new FormData();
+                formData.append("id_cocktail", JSON.stringify(cocktail.id))
+                const response = JSON.parse((await axios.post('/api/ingredients/get', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    }
+                })).data.response);
 
-            if (data) {
-                setIngredientsState(data);
+                setIngredientsState(response);
             }
-            else {
-                //return { message: "Не удалось совершить запрос!", status: 400 }
-                // TODO: реализовать попап с ошибкой
-
-                console.error("Не удалось совершить запрос!")
+            catch(error) {
+                // TODO popup error
+                console.error(error);
             }
         };
 
@@ -44,7 +48,7 @@ export const DrinkCard = ({cocktail, onFeaturedChange}: IDrinkCardProps) => {
     return (
         <div className="flex flex-col justify-center gap-y-2 w-40 h-card">
             <div className="flex relative">
-                <img src={cocktail.image ? cocktail.image : "default.png"} className="w-full h-52 object-cover rounded-xl" />
+                <img src={cocktail.image ? cocktail.image : "/cocktails/default.png"} className="w-full h-52 object-cover rounded-xl" />
                 <button onClick={handleChangeFeatured} className="absolute top-0 right-0 m-2">
                     <StarSvg className="star" fill={isFeaturedState ? '#FFC700' : '#C1C1C1'}/>
                 </button>

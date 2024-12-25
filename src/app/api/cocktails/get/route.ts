@@ -1,13 +1,46 @@
 import { NextResponse, NextRequest } from "next/server"
-import { getCocktails } from "@prisma/queries";
+import { PrismaClient } from "@prisma/client";
 import { json } from "@/shared";
 
 export const POST = async (request: NextRequest) => {
-    
-    const body = await request.json();
-    const { cocktailProps, ingredients } = body;
+    // Получение данных из формы
+    const formData = await request.formData();
 
-    const cocktails = json(await getCocktails({cocktailProps, ingredients}));
+    const title = formData.get("title");
+    const isFeatured = Boolean(formData.get("isFeatured"));
+    const ingredients_id = formData.getAll("ingredients_id").map(value => Number(value));
 
-    return NextResponse.json({"cocktails": cocktails}, { status: 200 });
+    // Настройка фильтров
+    const where: any = {};
+
+    if (title) {
+        where.title = {
+            contains: title,
+            mode: "insensitive",
+        };
+    }
+    if (isFeatured) {
+        where.isFeatured = isFeatured;
+    }
+    if (ingredients_id.length > 0) {
+        where.ingredients = {
+            some: {
+                id: {
+                    in: ingredients_id,
+                }
+            }
+        };
+    }
+
+    // Получение данных из БД
+    const prisma = new PrismaClient();
+
+    const cocktails = await prisma.cocktail.findMany({where: where});
+
+    await prisma.$disconnect();
+
+    // Преобразование и вывод
+    const response = json(cocktails);
+
+    return NextResponse.json({response, status: 200 });  
 };

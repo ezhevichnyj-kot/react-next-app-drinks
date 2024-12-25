@@ -1,10 +1,14 @@
+"use client";
+
 import { Container } from "../Container";
 import { useEffect, useState } from "react";
 import { ingredient } from "@prisma/client";
-import { fetchIngredients } from '@/shared/api/fetchIngredients';
 import { ISearchPanelProps } from "./component.props";
 import { twMerge } from "tailwind-merge";
 import { IconPlusSvg } from "@/assets";
+import axios from "axios";
+
+// TODO переделать на React hook form
 
 export const SearchPanel = ({ className, searchCallback }: ISearchPanelProps) => {
     
@@ -16,20 +20,18 @@ export const SearchPanel = ({ className, searchCallback }: ISearchPanelProps) =>
     useEffect(() => {
         const fetchData = async () => {
             
-            const data = await fetchIngredients({});
-            
-            if (data) {
-                setIngredientsState(
-                    data
-                        //.sort((a, b) => a.title.localCompare(b.name))
-                        .map((item) => ({...item, inFilter: false}))
-                );
+            try {
+                const response = JSON.parse((await axios.post('/api/ingredients/get', {}, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    }
+                })).data.response);
+
+                setIngredientsState(response.map((item: ingredient) => ({...item, inFilter: false})));
             }
-            else {
-                //return { message: "Не удалось совершить запрос!", status: 400 }
-                // TODO: реализовать попап с ошибкой
-                
-                console.error("Не удалось совершить запрос!")
+            catch(error) {
+                // TODO popup error
+                console.error(error);
             }
         };
         
@@ -104,7 +106,7 @@ export const SearchPanel = ({ className, searchCallback }: ISearchPanelProps) =>
 
                 <button
                     className="self-end w-full bg-positive text-black font-bold rounded py-1"
-                    onClick={() => {searchCallback(titleState, ingredientsState.filter(item => item.inFilter));}}
+                    onClick={() => {searchCallback(titleState, ingredientsState.filter(item => item.inFilter).map(item => Number(item.id)));}}
                 >Найти</button>
         </Container>
     );

@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Container, ListView } from "@/shared";
-import { DrinkCard } from "@/shared/ui/components/DrinkCard/component";
-import { cocktail, ingredient } from "@prisma/client";
-import { fetchCocktails } from "@/shared";
-import { SearchPanel } from "@/shared/ui/components/SearchPanel";
+import { Container, ListView, DrinkCard, SearchPanel } from "@/shared";
+import { cocktail } from "@prisma/client";
+import axios from "axios";
 
 const Home = () => {
     
@@ -15,17 +13,18 @@ const Home = () => {
     // get cocktails on load
     useEffect(() => {
         const fetchData = async () => {
-            
-            const data = await fetchCocktails({});
-            
-            if (data) {
-                setCocktailsState(data);
+            try {
+                const response = JSON.parse((await axios.post('/api/cocktails/get', {}, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    }
+                })).data.response);
+
+                setCocktailsState(response);
             }
-            else {
-                //return { message: "Не удалось совершить запрос!", status: 400 }
-                // TODO: реализовать попап с ошибкой
-                
-                console.error("Не удалось совершить запрос!")
+            catch(error) {
+                // TODO popup error
+                console.error(error);
             }
         };
         
@@ -33,19 +32,21 @@ const Home = () => {
     }, []);
 
     // TODO memoize this
-    const searchCocktails = (title: string, ingredients: ingredient[]) => {
+    const searchCocktails = (title: string, ingredients_id: number[]) => {
         const fetchData = async () => {
-            
-            const data = await fetchCocktails({cocktailProps: {title: title}, ingredients: ingredients.length ? ingredients : undefined});
-            
-            if (data) {
-                setCocktailsState(data);
+            try {
+                const formData = new FormData();
+
+                formData.append("title", title);
+                formData.append("ingredients_id", JSON.stringify(ingredients_id));
+
+                const response = JSON.parse(await axios.post('/api/cocktails/get', formData));
+
+                setCocktailsState(cocktailsState);
             }
-            else {
-                //return { message: "Не удалось совершить запрос!", status: 400 }
-                // TODO: реализовать попап с ошибкой
-                
-                console.error("Не удалось совершить запрос!")
+            catch(error) {
+                // TODO popup error
+                console.error(error);
             }
         };
         

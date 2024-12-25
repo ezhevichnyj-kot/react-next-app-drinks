@@ -1,0 +1,1 @@
+export { DrinkCard } from "./component";
