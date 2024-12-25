@@ -8,7 +8,7 @@ export const POST = async (request: NextRequest) => {
 
     const title = formData.get("title");
     const isFeatured = Boolean(formData.get("isFeatured"));
-    const ingredients_id = formData.getAll("ingredients_id").map(value => Number(value));
+    const ingredients_id = JSON.parse(formData.get("ingredients_id") as string);
 
     // Настройка фильтров
     const where: any = {};
@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest) => {
     if (isFeatured) {
         where.isFeatured = isFeatured;
     }
-    if (ingredients_id.length > 0) {
+    if (ingredients_id && ingredients_id.length > 0) {
         where.ingredients = {
             some: {
                 id: {
