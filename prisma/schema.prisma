@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model cocktail {
+  id                  BigInt                @id @default(autoincrement())
+  title               String
+  isFeatured          Boolean               @default(false)
+  image               String?
+  markdown            String?
+  cocktail_ingredient cocktail_ingredient[]
+}
+
+model cocktail_ingredient {
+  id            BigInt      @id @default(autoincrement())
+  id_cocktail   BigInt?
+  id_ingredient BigInt?
+  cocktail      cocktail?   @relation(fields: [id_cocktail], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "to_cocktail")
+  ingredient    ingredient? @relation(fields: [id_ingredient], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "to_ingredient")
+}
+
+model ingredient {
+  id                  BigInt                @id @default(autoincrement())
+  title               String                @unique(map: "unique_title")
+  cocktail_ingredient cocktail_ingredient[]
+}

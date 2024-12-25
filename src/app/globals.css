@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #333333;
+  --positive: #8BFFA0;
+  --negative: #FF8688;
+  --banana: #F8E774;
+  --ice: #31C7E9;
+  --yogurt: #FF5FEF;
+  --black-glass: rgba(0, 0, 0, 0.2);
+}
